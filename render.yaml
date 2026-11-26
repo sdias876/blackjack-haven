@@ -1,0 +1,12 @@
+# Render Blueprint: one web service runs the game server and serves the built client.
+services:
+  - type: web
+    name: blackjack-haven
+    runtime: node
+    plan: starter # free plans sleep when idle, which drops live tables
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
