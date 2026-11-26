@@ -265,7 +265,7 @@ export default function TableView({ view, receivedAt, emit, onLeave, onHelp, onR
             <div className="quick-bets">
               <button onClick={() => setBet(clampBet(v.limits.min))}>MIN</button>
               <button onClick={() => setBet(clampBet(v.limits.min * 2))}>2×</button>
-              <button onClick={() => setBet(clampBet(mine.chips / 2))}>HALF MY CHIPS</button>
+              <button onClick={() => setBet(clampBet(mine.chips / 2))} title="Bet half of your chips">HALF</button>
               <button onClick={() => setBet(clampBet(cap))}>MAX</button>
               {v.canSecret && (
                 <label className={`secret ${secret ? 'on' : ''}`}>
@@ -281,7 +281,10 @@ export default function TableView({ view, receivedAt, emit, onLeave, onHelp, onR
         {v.legal && (
           <div className="turn-box">
             <div className="turn-prompt">
-              <b>YOUR TURN</b>
+              <div className="turn-head">
+                <b>YOUR TURN</b>
+                <span className="timer">{secs}s</span>
+              </div>
               {(() => {
                 const h = mine?.hands?.[v.turn?.hand ?? 0];
                 const up = cardValue(v.dealer.cards[0]);
@@ -292,7 +295,6 @@ export default function TableView({ view, receivedAt, emit, onLeave, onHelp, onR
                   </span>
                 ) : null;
               })()}
-              <span className="timer">{secs}s</span>
             </div>
             <div className="action-bar">
               {ACTIONS.filter(([a]) => v.legal[a]).map(([a, label, color, hint]) => (
