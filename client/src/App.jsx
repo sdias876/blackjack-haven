@@ -12,6 +12,7 @@ const tourSeen = () => {
   }
 };
 import TableView from './TableView.jsx';
+import { MegaWheel } from './wheel.jsx';
 
 export default function App() {
   const pid = useMemo(() => playerId(), []);
@@ -158,6 +159,7 @@ export default function App() {
       {body}
       {!connected && profile && screen !== 'welcome' && <div className="offline">Connecting to the game server…</div>}
       {modal?.kind === 'help' && <Help onClose={() => setModal(null)} onTour={() => setModal({ kind: 'tour' })} />}
+      {modal?.kind === 'wheel' && <MegaWheel wallet={wallet} updateWallet={updateWallet} onClose={() => setModal(null)} />}
       {modal?.kind === 'tour' && (
         <Tour
           onClose={() => {

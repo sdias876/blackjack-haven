@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Logo, Avatar, CoinPill, Modal, Stepper, THEMES, fmt, AVATAR_COUNT, cityArt } from './ui.jsx';
 import { FREE_EVERY_MS } from './wallet.js';
+import { spinLeft, fmtWait } from './wheel.jsx';
 
 // ---------------- Welcome ----------------
 export function Welcome({ onStart, profile }) {
@@ -46,6 +47,7 @@ export function Menu({ wallet, level, profile, setModal, claimFree, onPlayNow, o
     return () => clearInterval(t);
   }, []);
   const freeLeft = Math.max(0, wallet.lastFree + FREE_EVERY_MS - now);
+  const wheelLeft = spinLeft(wallet, now);
   return (
     <div className="screen menu suits-bg">
       <header className="topbar">
@@ -65,6 +67,12 @@ export function Menu({ wallet, level, profile, setModal, claimFree, onPlayNow, o
 
       <main className="menu-main">
         <aside className="side-tiles">
+          <button className={`tile gold mega-tile ${wheelLeft ? '' : 'ready'}`} onClick={() => setModal({ kind: 'wheel' })}>
+            <span className="mini-wheel" aria-hidden="true" />
+            <b>MEGA BONUS</b>
+            <small>{wheelLeft ? fmtWait(wheelLeft).toUpperCase() : 'FREE SPIN!'}</small>
+            {!wheelLeft && <em className="badge">1</em>}
+          </button>
           <button className="tile red" onClick={claimFree}>
             <img src="/art/icons/gift.webp" alt="" />
             <b>{freeLeft ? `${Math.ceil(freeLeft / 60000)} MIN` : '+100 FREE'}</b>

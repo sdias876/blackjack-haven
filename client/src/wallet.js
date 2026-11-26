@@ -4,8 +4,9 @@ const KEY = 'bjh.wallet.v1';
 export const START_COINS = 50000;
 export const FREE_COINS = 100;
 export const FREE_EVERY_MS = 60 * 60 * 1000;
+export const SPIN_EVERY_MS = 4 * 60 * 60 * 1000; // Mega Bonus wheel
 
-const blank = () => ({ coins: START_COINS, xp: 0, lastFree: 0, results: [], paid: {} });
+const blank = () => ({ coins: START_COINS, xp: 0, lastFree: 0, lastSpin: 0, results: [], paid: {} });
 
 export function loadWallet() {
   try {

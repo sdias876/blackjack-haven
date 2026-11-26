@@ -17,6 +17,7 @@ This is the first playable version (roadmap Phases 0–1): the full rules engine
 - **Fair play:** the server deals from a `crypto.randomInt` Fisher–Yates shoe and logs a SHA-256 hash of each shoe; clients only send intents and never see the hole card or the shoe. 15-second turn timer; on timeout or disconnect the server plays basic strategy for you and keeps your seat.
 - **Bots:** basic strategy with small personality-based mistakes (Cautious, Steady, Gambler) and tournament-aware betting: protect a lead, chase when about to be cut, Secret Bet when leading.
 - **After the game:** finishing place, prize, and how many of your decisions matched basic strategy, with your costliest misses.
+- **Mega Bonus wheel:** one free spin every 4 hours for 250 to 10,000 coins (the menu tile glows when a spin is ready; the prize is paid before the wheel stops, so reloading can't repeat a spin).
 - **Free coins:** 50,000 to start, +100 free coins every hour. Coins, level and results are stored on the device (`localStorage`).
 
 ## Run it
@@ -48,4 +49,4 @@ client/public/art/   Spade Haven Canva art: avatars/ (49 portraits), cities/, bg
 
 ## Next (from the roadmap)
 
-Scheduled multi-table tournaments with table balancing, Google Play Games and email sign-in with server-side coins, the Mega Bonus wheel and daily gifts, weekly leagues and missions, skill-based matchmaking and the integrity worker, the 60-second interactive tutorial, sound, and chat/emotes.
+Scheduled multi-table tournaments with table balancing, Google Play Games and email sign-in with server-side coins, the daily gifts, weekly leagues and missions, skill-based matchmaking and the integrity worker, the 60-second interactive tutorial, sound, and chat/emotes.
