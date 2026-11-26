@@ -259,6 +259,7 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
       title="Create table"
       onClose={onClose}
       wide
+      className="create-modal"
       banner={
         <div className="city-banner" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,6,40,.15), rgba(10,6,40,.75)), url(${cityArt(city)})` }}>
           <h5>{isPrivate ? 'TABLE FOR FRIENDS' : 'CREATE A TABLE'}</h5>
@@ -266,6 +267,8 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
         </div>
       }
     >
+      <div className="create-grid">
+      <div className="create-col-a">
       <div className="bet-head">
         <span className="bet-pill">
           <img src="/art/icons/coins.webp" alt="" /> ENTRY {fmt(entry)}
@@ -285,6 +288,8 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
         <img src="/art/icons/medal-gold.webp" alt="" /> 1st wins {fmt(prize1)} · <img src="/art/icons/medal-silver.webp" alt="" /> 2nd wins {fmt(prize2)}
       </div>
 
+      </div>
+      <div className="create-col-b">
       <div className="opt-box">
         <h4>GAME LENGTH</h4>
         <div className="seg">
@@ -316,9 +321,11 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
         })}
       </div>
 
-      <button className="pill green big wide" disabled={wallet.coins < entry} onClick={() => onCreate({ isPrivate, length, entry, theme })}>
+      </div>
+      <button className="pill green big wide create-go" disabled={wallet.coins < entry} onClick={() => onCreate({ isPrivate, length, entry, theme })}>
         {wallet.coins < entry ? 'NOT ENOUGH COINS' : isPrivate ? 'CREATE TABLE' : 'PLAY NOW'}
       </button>
+      </div>
     </Modal>
   );
 }
@@ -327,13 +334,15 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
 export function PrivateGame({ onClose, onCreate, onJoin }) {
   const [code, setCode] = useState('');
   return (
-    <Modal title="PLAY WITH FRIENDS" onClose={onClose}>
+    <Modal title="PLAY WITH FRIENDS" onClose={onClose} className="friends-modal">
+      <div className="art-row">
       <img src="/art/icons/friends.webp" alt="" className="modal-art" />
       <ol className="steps">
         <li>Create a table. You get a 5-letter code and an invite link.</li>
         <li>Send the code or link to your friends.</li>
         <li>Press Start when everyone is in. Computer players fill any empty seats.</li>
       </ol>
+      </div>
       <button className="pill gold big wide" onClick={onCreate}>
         CREATE A TABLE
       </button>

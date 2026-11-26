@@ -4,13 +4,13 @@ import React from 'react';
 export const fmt = (n) => (n ?? 0).toLocaleString('en-US');
 
 export const THEMES = [
-  { id: 'royal-purple', name: 'Royal Purple', a: '#7b3cf0', b: '#3a1a9a', level: 1 },
-  { id: 'emerald', name: 'Emerald', a: '#25a35c', b: '#0d5a32', level: 1 },
-  { id: 'ocean', name: 'Ocean', a: '#2a8fe0', b: '#0d4a8a', level: 1 },
-  { id: 'ruby', name: 'Ruby', a: '#c8244e', b: '#6a0b25', level: 1 },
+  { id: 'royal-purple', name: 'Purple', a: '#7b3cf0', b: '#3a1a9a', level: 1 },
+  { id: 'emerald', name: 'Green', a: '#25a35c', b: '#0d5a32', level: 1 },
+  { id: 'ocean', name: 'Blue', a: '#2a8fe0', b: '#0d4a8a', level: 1 },
+  { id: 'ruby', name: 'Red', a: '#c8244e', b: '#6a0b25', level: 1 },
   { id: 'sunset', name: 'Sunset', a: '#e8724a', b: '#8a2a4a', level: 2 },
-  { id: 'neon-night', name: 'Neon Night', a: '#2b1a6a', b: '#0b0820', level: 3 },
-  { id: 'royal-gold', name: 'Royal Gold', a: '#3a3020', b: '#15110a', level: 5 },
+  { id: 'neon-night', name: 'Neon', a: '#2b1a6a', b: '#0b0820', level: 3 },
+  { id: 'royal-gold', name: 'Gold', a: '#3a3020', b: '#15110a', level: 5 },
 ];
 export const themeOf = (id) => THEMES.find((t) => t.id === id) ?? THEMES[0];
 
@@ -77,10 +77,10 @@ export function Card({ card, small }) {
   );
 }
 
-export function Modal({ title, onClose, children, wide, banner }) {
+export function Modal({ title, onClose, children, wide, banner, className = '' }) {
   return (
     <div className="modal-back" role="dialog" aria-modal="true" aria-label={title}>
-      <div className={`modal ${wide ? 'wide' : ''}`}>
+      <div className={`modal ${wide ? 'wide' : ''} ${className}`}>
         {banner}
         {!banner && <h2>{title}</h2>}
         {onClose && (

@@ -117,9 +117,8 @@ export function MegaWheel({ wallet, updateWallet, onClose }) {
   };
 
   return (
-    <Modal title="MEGA BONUS" onClose={spinning ? null : onClose}>
+    <Modal title="MEGA BONUS" onClose={spinning ? null : onClose} className="wheel-modal">
       <div className="mega">
-        <p className="explain center">One free spin every {SPIN_EVERY_MS / 3600000} hours. Every slice wins coins!</p>
         <div className={`wheel-wrap ${spinning ? 'spinning' : ''} ${ready ? 'ready' : ''}`}>
           <div className="wheel-pointer" aria-hidden="true" />
           <div className="wheel-rim">
@@ -135,6 +134,8 @@ export function MegaWheel({ wallet, updateWallet, onClose }) {
             </button>
           </div>
         </div>
+        <div className="mega-side">
+        <p className="explain center">One free spin every {SPIN_EVERY_MS / 3600000} hours. Every slice wins coins!</p>
         {won != null ? (
           <div className="mega-win">
             <img src="/art/icons/coins.webp" alt="" />
@@ -154,6 +155,7 @@ export function MegaWheel({ wallet, updateWallet, onClose }) {
           </button>
         )}
         <p className="fine center">Coins are play money with no cash value.</p>
+        </div>
       </div>
     </Modal>
   );
