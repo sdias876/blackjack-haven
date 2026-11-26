@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
     socket.data.playerId = id;
     const p = players.get(id) ?? { tableId: null, sockets: new Set() };
     p.name = clean(name) || 'Guest';
-    p.avatar = Number.isInteger(avatar) ? avatar : 0;
+    p.avatar = Number.isInteger(avatar) && avatar >= 0 && avatar < 49 ? avatar : 0;
     p.sockets.add(socket.id);
     players.set(id, p);
     // Reconnect to a table in progress

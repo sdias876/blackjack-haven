@@ -65,15 +65,15 @@ export function bustChanceIfHit(cards) {
 
 const LABEL = { hit: 'Hit', stand: 'Stand', double: 'Double', split: 'Split' };
 
-/** One-line Smart Coach tip, e.g. "Basic strategy: Stand. Dealer busts about 42% from a 6." */
+/** One-line Smart Coach tip, e.g. "Best move: Stand. The dealer goes over 21 about 42% of the time with a 6 showing." */
 export function coachTip(cards, upcard, legal) {
   const move = basicStrategy(cards, upcard, legal);
   const up = rankValue(upcard.r);
   const upName = upcard.r === 'A' ? 'an ace' : up === 10 ? 'a 10' : up === 8 ? 'an 8' : `a ${up}`;
-  let why = `Dealer busts about ${DEALER_BUST[up]}% from ${upName}.`;
+  let why = `The dealer goes over 21 about ${DEALER_BUST[up]}% of the time with ${upName} showing.`;
   const bust = bustChanceIfHit(cards);
-  if (move === 'hit' && bust > 0) why = `You bust ${bust}% of the time if you hit, but standing loses more often.`;
+  if (move === 'hit' && bust > 0) why = `Another card takes you over 21 ${bust}% of the time, but stopping here loses more often.`;
   if (move === 'split') why = 'Splitting turns one weak hand into two better ones.';
   if (move === 'double') why = 'You are the favorite here, so put more chips in.';
-  return { move, text: `Basic strategy: ${LABEL[move]}. ${why}` };
+  return { move, text: `Best move: ${LABEL[move]}. ${why}` };
 }

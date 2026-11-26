@@ -89,7 +89,7 @@ test('bust chance and coach tips', () => {
   assert.equal(bustChanceIfHit(C('A 5')), 0);
   const tip = coachTip(C('10 6'), { r: '6', s: 'H' }, { double: true, split: false });
   assert.equal(tip.move, 'stand');
-  assert.match(tip.text, /Dealer busts about 42% from a 6/);
+  assert.match(tip.text, /goes over 21 about 42% of the time with a 6 showing/);
 });
 
 test('bots protect a lead and gamble when they are about to be cut', () => {

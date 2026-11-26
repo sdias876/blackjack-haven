@@ -8,7 +8,7 @@ export const CITIES = [
   { name: 'New York', entry: 100 },
   { name: 'Las Vegas', entry: 500 },
   { name: 'Monte Carlo', entry: 2500 },
-  { name: 'Macau', entry: 10000 },
+  { name: 'London', entry: 10000 },
 ];
 // TIMING_SCALE=0.2 speeds every timer up 5× (handy for testing a whole tournament).
 const SCALE = Number(process.env.TIMING_SCALE) || 1;

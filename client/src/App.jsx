@@ -1,7 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { loadWallet, saveWallet, playerId, loadProfile, saveProfile, levelOf, xpForPlace, FREE_COINS, FREE_EVERY_MS } from './wallet.js';
-import { Welcome, Menu, Lobby, CreateTable, PrivateGame, Help, Leaders, Trophies } from './screens.jsx';
+import { Welcome, Menu, Lobby, CreateTable, PrivateGame, Help, Leaders, Trophies, Tour } from './screens.jsx';
+
+const TOUR_KEY = 'bjh-tour-seen';
+const tourSeen = () => {
+  try {
+    return localStorage.getItem(TOUR_KEY) === '1';
+  } catch {
+    return true;
+  }
+};
 import TableView from './TableView.jsx';
 
 export default function App() {
@@ -118,15 +127,17 @@ export default function App() {
   if (screen === 'welcome' || !profile) {
     body = (
       <Welcome
+        profile={profile}
         onStart={(p) => {
           saveProfile(p);
           setProfile(p);
           setScreen('menu');
+          if (!tourSeen()) setModal({ kind: 'tour', first: true });
         }}
       />
     );
   } else if (screen === 'table' && view) {
-    body = <TableView key={view.id} view={view} receivedAt={receivedAt} emit={emit} onLeave={leaveTable} onHelp={() => setModal({ kind: 'help' })} say={say} wallet={wallet} profile={profile} join={join} />;
+    body = <TableView key={view.id} view={view} receivedAt={receivedAt} emit={emit} onLeave={leaveTable} onHelp={() => setModal({ kind: 'tour' })} onRules={() => setModal({ kind: 'help' })} say={say} wallet={wallet} profile={profile} join={join} />;
   } else if (screen === 'lobby') {
     body = <Lobby {...common} emit={emit} join={join} onBack={() => setScreen('menu')} />;
   } else {
@@ -146,7 +157,27 @@ export default function App() {
     <div className="app">
       {body}
       {!connected && profile && screen !== 'welcome' && <div className="offline">Connecting to the game server…</div>}
-      {modal?.kind === 'help' && <Help onClose={() => setModal(null)} />}
+      {modal?.kind === 'help' && <Help onClose={() => setModal(null)} onTour={() => setModal({ kind: 'tour' })} />}
+      {modal?.kind === 'tour' && (
+        <Tour
+          onClose={() => {
+            try {
+              localStorage.setItem(TOUR_KEY, '1');
+            } catch {}
+            setModal(null);
+          }}
+          onPractice={
+            screen === 'table'
+              ? null
+              : () => {
+                  try {
+                    localStorage.setItem(TOUR_KEY, '1');
+                  } catch {}
+                  join('practice', { length: 'quick' }, 0);
+                }
+          }
+        />
+      )}
       {modal?.kind === 'leaders' && <Leaders wallet={wallet} profile={profile} onClose={() => setModal(null)} />}
       {modal?.kind === 'trophies' && <Trophies wallet={wallet} onClose={() => setModal(null)} />}
       {modal?.kind === 'private' && (

@@ -6,8 +6,10 @@ This is the first playable version (roadmap Phases 0–1): the full rules engine
 
 ## What works
 
+- **Spade Haven art:** the Canva pictures from Spade Haven: 49 player portraits (players pick one, bots get one), city scenes for each table, and the game icons (`client/public/art/`).
+- **Easy to learn:** a 4-step guide on the first visit (also behind every **?** button), plain-language labels, a "Your turn" prompt showing your total and the dealer's card, and a short hint on every move button.
 - **Play Now:** joins the next public Sit-and-Go (100 coins entry). Empty seats fill with bots after 20 seconds, or press **Start now**.
-- **Online Lobby:** open tables by type (Sit-and-Go or Quick) and entry, with **Create table**: entry slider (city banner changes with the entry: New York, Las Vegas, Monte Carlo, Macau), game length, and table themes (Sunset, Neon Night and Royal Gold unlock with levels).
+- **Online Lobby:** open tables by type (Sit-and-Go or Quick) and entry, with **Create table**: entry slider (the city picture changes with the entry: New York, Las Vegas, Monte Carlo, London), game length, and table themes (Sunset, Neon Night and Royal Gold unlock with levels).
 - **Private Game:** create a table with a 5-letter code and an invite link (`/?join=CODE`), or join with a code.
 - **Practice:** free table against 5 bots with the **Smart Coach** (highlights the basic-strategy move and explains why).
 - **Tournament rules:** 3 rounds (Standard 8 hands, Quick 5 hands); bets 10–100, 25–250, 50–500; lowest stack eliminated after rounds 1 and 2; biggest stack wins after round 3. 1st and 2nd split 90% of the entries 2:1. **Secret Bet** once per round on the cut hand and the final hand.
@@ -41,7 +43,7 @@ server/src/          index.js (Express + Socket.io), rooms.js (tables, codes, lo
 server/test/         node:test suites
 client/src/          App.jsx (socket, wallet, routing), screens.jsx (welcome, menu, lobby, create table,
                      private game, help, leaders, trophies), TableView.jsx (the table), styles.css
-client/public/ui/    Spade Haven icons (coins, trophy, crown, podium, tables, chat)
+client/public/art/   Spade Haven Canva art: avatars/ (49 portraits), cities/, bg/, icons/
 ```
 
 ## Next (from the roadmap)

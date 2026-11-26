@@ -70,7 +70,7 @@ test('betting limits, turn order and illegal actions are enforced by the server'
   if (t.phase === 'playing') {
     const v = t.viewFor('me', now);
     assert.ok(v.legal.hit && v.legal.stand);
-    assert.ok(v.coach && v.coach.text.startsWith('Basic strategy'), 'practice shows the coach');
+    assert.ok(v.coach && v.coach.text.startsWith('Best move'), 'practice shows the coach');
     assert.equal(v.dealer.cards[1], null, 'hole card hidden from players');
     const other = (me + 1) % SEATS;
     assert.equal(t.act(other, 'stand').ok, false, 'not their turn');

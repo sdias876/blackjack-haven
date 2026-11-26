@@ -14,14 +14,13 @@ export const THEMES = [
 ];
 export const themeOf = (id) => THEMES.find((t) => t.id === id) ?? THEMES[0];
 
-const AVATAR_COLORS = [
-  ['#ff9a5a', '#c2410c'],
-  ['#7dd3fc', '#1d4ed8'],
-  ['#c4b5fd', '#6d28d9'],
-  ['#86efac', '#15803d'],
-  ['#fda4af', '#be123c'],
-  ['#fde68a', '#b45309'],
-];
+// Spade Haven Canva art: 49 portraits (people first, then animals and characters).
+export const AVATAR_COUNT = 49;
+export const avatarSrc = (i) => `/art/avatars/${((Number(i) % AVATAR_COUNT) + AVATAR_COUNT) % AVATAR_COUNT}.webp`;
+
+// City scene for each table (entry level) — the same pictures as Spade Haven.
+const CITY_ART = { 'New York': 'new-york', 'Las Vegas': 'las-vegas', 'Monte Carlo': 'monte-carlo', London: 'london' };
+export const cityArt = (city) => (CITY_ART[city] ? `/art/cities/${CITY_ART[city]}.webp` : '/art/bg/practice.webp');
 
 export function Logo({ small }) {
   return (
@@ -37,21 +36,13 @@ export function Logo({ small }) {
   );
 }
 
-export function Avatar({ name = '?', index = 0, size = 64, ring = 'gold', bot = false, empty = false }) {
-  const [a, b] = AVATAR_COLORS[Math.abs(index) % AVATAR_COLORS.length];
+export function Avatar({ name = '?', index = 0, size = 64, ring = 'gold', empty = false }) {
   return (
     <div className={`avatar ring-${ring}`} style={{ width: size, height: size }}>
       {empty ? (
-        <div className="avatar-face empty">
-          <svg viewBox="0 0 24 24" width="55%" aria-hidden="true">
-            <circle cx="12" cy="8" r="4.2" fill="currentColor" />
-            <path d="M3.5 21c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z" fill="currentColor" />
-          </svg>
-        </div>
+        <img className="avatar-face" src="/art/icons/avatar-empty.webp" alt="Empty seat" />
       ) : (
-        <div className="avatar-face" style={{ background: `radial-gradient(circle at 35% 30%, ${a}, ${b})`, fontSize: size * 0.42 }}>
-          {bot ? '🤖' : name.trim().charAt(0).toUpperCase() || '?'}
-        </div>
+        <img className="avatar-face photo" src={avatarSrc(index)} alt={name} loading="lazy" />
       )}
     </div>
   );
@@ -60,10 +51,10 @@ export function Avatar({ name = '?', index = 0, size = 64, ring = 'gold', bot = 
 export function CoinPill({ coins, onPlus }) {
   return (
     <div className="coin-pill">
-      <span className="coin-dot">♠</span>
+      <img className="coin-img" src="/art/icons/coins.webp" alt="" />
       <b>{fmt(coins)}</b>
       {onPlus && (
-        <button className="plus" onClick={onPlus} aria-label="Get free coins">
+        <button className="plus" onClick={onPlus} aria-label="Get free coins" title="Get free coins">
           +
         </button>
       )}

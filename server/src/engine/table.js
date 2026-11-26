@@ -9,6 +9,8 @@ import { basicStrategy, coachTip } from './strategy.js';
 import { botBet, botMove, BOT_NAMES, PERSONALITIES } from './bots.js';
 import { rankValue } from './cards.js';
 
+/** Number of Spade Haven portraits the client can show (client/public/art/avatars). */
+export const AVATAR_COUNT = 49;
 export const SEATS = 6;
 export const START_CHIPS = 1000;
 export const ROUNDS = [
@@ -189,12 +191,15 @@ export class Table {
     const used = new Set(this.seats.filter(Boolean).map((s) => s.name));
     const names = BOT_NAMES.filter((n) => !used.has(n));
     const kinds = Object.keys(PERSONALITIES);
+    const usedPics = new Set(this.seats.filter(Boolean).map((s) => s.avatar));
+    const pics = Array.from({ length: AVATAR_COUNT }, (_, n) => n).filter((n) => !usedPics.has(n));
     for (let i = 0; i < SEATS; i++) {
       if (this.seats[i]) continue;
       const name = names.splice(this.rand(names.length), 1)[0] ?? `Bot ${i + 1}`;
       this.seats[i] = this.newSeat({
         id: `bot-${i}-${this.id}`,
         name,
+        avatar: pics.splice(this.rand(pics.length), 1)[0] ?? i,
         bot: true,
         personality: kinds[this.rand(kinds.length)],
       });

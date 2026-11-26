@@ -1,32 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { Logo, Avatar, CoinPill, Modal, Stepper, THEMES, fmt } from './ui.jsx';
+import { Logo, Avatar, CoinPill, Modal, Stepper, THEMES, fmt, AVATAR_COUNT, cityArt } from './ui.jsx';
 import { FREE_EVERY_MS } from './wallet.js';
 
 // ---------------- Welcome ----------------
-export function Welcome({ onStart }) {
-  const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState(0);
+export function Welcome({ onStart, profile }) {
+  const [name, setName] = useState(profile?.name ?? '');
+  const [avatar, setAvatar] = useState(profile?.avatar ?? Math.floor(Math.random() * AVATAR_COUNT));
   const go = () => onStart({ name: name.trim() || `Guest${Math.floor(10000 + Math.random() * 89999)}`, avatar });
   return (
     <div className="screen welcome suits-bg">
       <div className="welcome-inner">
         <Logo />
         <div className="glow-line" />
-        <label className="field-label" htmlFor="nm">
-          Your table name
-        </label>
-        <input id="nm" className="field" maxLength={16} placeholder="Guest" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && go()} />
+        <div className="me-preview">
+          <Avatar name={name || 'You'} index={avatar} size={110} />
+          <div>
+            <label className="field-label" htmlFor="nm">
+              1. Type your name
+            </label>
+            <input id="nm" className="field" maxLength={16} placeholder="Guest" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && go()} />
+          </div>
+        </div>
+        <div className="field-label">2. Pick your picture</div>
         <div className="avatar-pick" role="radiogroup" aria-label="Pick a picture">
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <button key={i} role="radio" aria-checked={avatar === i} className={avatar === i ? 'on' : ''} onClick={() => setAvatar(i)}>
-              <Avatar name={name || 'G'} index={i} size={52} ring={avatar === i ? 'gold' : 'silver'} />
+          {Array.from({ length: AVATAR_COUNT }, (_, i) => (
+            <button key={i} role="radio" aria-checked={avatar === i} aria-label={`Picture ${i + 1}`} className={avatar === i ? 'on' : ''} onClick={() => setAvatar(i)}>
+              <Avatar name="" index={i} size={58} ring={avatar === i ? 'gold' : 'silver'} />
             </button>
           ))}
         </div>
         <button className="pill green big" onClick={go}>
-          <span className="pill-ic">▶</span> Continue as guest
+          <img className="pill-img" src="/art/icons/play.webp" alt="" /> {profile ? 'SAVE' : "LET'S PLAY"}
         </button>
-        <p className="fine">Free to play. Coins are play money with no cash value. Google Play Games and email sign-in are coming soon.</p>
+        <p className="fine">Free to play. Coins are play money with no cash value and can never be bought or cashed out.</p>
       </div>
     </div>
   );
@@ -43,15 +49,16 @@ export function Menu({ wallet, level, profile, setModal, claimFree, onPlayNow, o
   return (
     <div className="screen menu suits-bg">
       <header className="topbar">
-        <button className="me-btn" onClick={onRename} aria-label="Change name or picture">
+        <button className="me-btn" onClick={onRename} aria-label="Change name or picture" title="Change name or picture">
           <Avatar name={profile.name} index={profile.avatar} size={58} />
+          <span className="me-name">{profile.name}</span>
         </button>
         <CoinPill coins={wallet.coins} onPlus={claimFree} />
         <div className="level-pill">
           <span className="star">★</span> LEVEL {level}
         </div>
         <div className="spacer" />
-        <button className="round-gold" onClick={() => setModal({ kind: 'help' })} aria-label="How to play">
+        <button className="round-gold" onClick={() => setModal({ kind: 'tour' })} aria-label="How to play" title="How to play">
           ?
         </button>
       </header>
@@ -59,62 +66,63 @@ export function Menu({ wallet, level, profile, setModal, claimFree, onPlayNow, o
       <main className="menu-main">
         <aside className="side-tiles">
           <button className="tile red" onClick={claimFree}>
-            <img src="/ui/coins.webp" alt="" />
-            <b>+100</b>
-            <small>{freeLeft ? `${Math.ceil(freeLeft / 60000)} MIN` : 'FREE COINS'}</small>
+            <img src="/art/icons/gift.webp" alt="" />
+            <b>{freeLeft ? `${Math.ceil(freeLeft / 60000)} MIN` : '+100 FREE'}</b>
+            <small>{freeLeft ? 'NEXT FREE COINS' : 'TAP TO COLLECT'}</small>
           </button>
           <button className="tile purple" onClick={onPractice}>
-            <img src="/ui/crown.webp" alt="" />
+            <img src="/art/icons/crown.webp" alt="" />
             <b>PRACTICE</b>
-            <small>SMART COACH</small>
+            <small>FREE · WITH TIPS</small>
           </button>
-          <button className="tile green" onClick={() => setModal({ kind: 'help' })}>
-            <img src="/ui/chat.webp" alt="" />
+          <button className="tile green" onClick={() => setModal({ kind: 'tour' })}>
+            <img src="/art/icons/crowned-card.webp" alt="" />
             <b>HOW TO</b>
-            <small>PLAY</small>
+            <small>PLAY IN 1 MIN</small>
           </button>
         </aside>
 
         <div className="big-buttons">
           <button className="big-btn" onClick={onPlayNow}>
             <span className="ring">
-              <span className="play-disc">▶</span>
+              <img src="/art/icons/play.webp" alt="" />
             </span>
             <span className="pill green">PLAY NOW</span>
-            <small className="under">Sit-and-Go · 100 coins entry</small>
+            <small className="under">Join a 6-player game right away · 100 coins</small>
           </button>
           <button className="big-btn" onClick={onLobby}>
             <span className="ring blue">
-              <img src="/ui/friends-table.webp" alt="" />
+              <img src="/art/icons/globe.webp" alt="" />
             </span>
             <span className="pill blue">ONLINE LOBBY</span>
+            <small className="under">Choose a table and an entry</small>
           </button>
           <button className="big-btn" onClick={onPrivate}>
             <span className="ring purple">
-              <img src="/ui/create-table.webp" alt="" />
+              <img src="/art/icons/friends-table.webp" alt="" />
             </span>
-            <span className="pill purple">PRIVATE GAME</span>
-            <small className="neon">NOW OPEN</small>
+            <span className="pill purple">PLAY WITH FRIENDS</span>
+            <small className="under">Make a table and share the code</small>
           </button>
         </div>
       </main>
 
       <nav className="bottombar">
         <button onClick={() => setModal({ kind: 'leaders' })}>
-          <img src="/ui/podium.webp" alt="" />
-          LEADERS
+          <img src="/art/icons/podium.webp" alt="" />
+          MY STATS
         </button>
         <button onClick={() => setModal({ kind: 'trophies' })}>
-          <img src="/ui/trophy.webp" alt="" />
-          TROPHY
+          <img src="/art/icons/trophy.webp" alt="" />
+          TROPHIES
         </button>
         <button onClick={onPractice}>
-          <img src="/ui/crown.webp" alt="" />
+          <img src="/art/icons/crown.webp" alt="" />
           PRACTICE
         </button>
         <button onClick={() => setModal({ kind: 'help' })}>
-          <img src="/ui/chat.webp" alt="" />
-          HELP
+          <img src="/art/icons/chat.webp" alt="" />
+          RULES
         </button>
       </nav>
     </div>
@@ -123,8 +131,8 @@ export function Menu({ wallet, level, profile, setModal, claimFree, onPlayNow, o
 
 // ---------------- Online lobby ----------------
 const TYPES = [
-  { id: 'standard', label: 'SIT-AND-GO' },
-  { id: 'quick', label: 'QUICK SIT-AND-GO' },
+  { id: 'standard', label: 'STANDARD · 8 HANDS' },
+  { id: 'quick', label: 'QUICK · 5 HANDS' },
 ];
 const ENTRY_FILTER = ['ANY', 100, 500, 2500, 10000];
 
@@ -150,7 +158,7 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
           ‹
         </button>
         <div className="panel">
-          <h4>ROOM TYPE</h4>
+          <h4>GAME LENGTH</h4>
           <div className="switch">
             <button className="gold-round" onClick={() => setType((type + TYPES.length - 1) % TYPES.length)} aria-label="Previous type">
               ‹
@@ -162,7 +170,7 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
           </div>
         </div>
         <div className="panel">
-          <h4>ENTRY</h4>
+          <h4>ENTRY COINS</h4>
           <Stepper value={ENTRY_FILTER[ef] === 'ANY' ? 'ANY' : fmt(ENTRY_FILTER[ef])} onMinus={() => setEf((ef + ENTRY_FILTER.length - 1) % ENTRY_FILTER.length)} onPlus={() => setEf((ef + 1) % ENTRY_FILTER.length)} />
         </div>
         <div className="spacer" />
@@ -171,10 +179,11 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
 
       <main className="lobby-main">
         <div className="create-col">
-          <img src="/ui/create-table.webp" alt="" className="float" />
+          <img src="/art/icons/create-table.webp" alt="" className="float" />
           <button className="pill gold" onClick={() => setModal({ kind: 'create', isPrivate: false })}>
             CREATE TABLE
           </button>
+          <small className="under">Start your own table. Others can join it here.</small>
         </div>
         <div className="table-list">
           {tables === null ? (
@@ -183,10 +192,10 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
             </div>
           ) : shown.length === 0 ? (
             <div className="empty-card">
-              <img src="/ui/friends-table.webp" alt="" />
+              <img src="/art/icons/friends-table.webp" alt="" />
               <div>
-                <h3>NO ONE IS PLAYING {TYPES[type].label} RIGHT NOW</h3>
-                <p>Tables with real players show up here as soon as someone sits down. Create one and others can join you.</p>
+                <h3>NO OPEN TABLES RIGHT NOW</h3>
+                <p>Tables with real players show up here as soon as someone sits down. Create one and others can join you, or press Play Now on the menu. Empty seats are filled by computer players.</p>
                 <button className="pill gold" onClick={() => setModal({ kind: 'create', isPrivate: false })}>
                   CREATE A TABLE
                 </button>
@@ -194,11 +203,11 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
             </div>
           ) : (
             shown.map((t) => (
-              <div className="table-row" key={t.id}>
+              <div className="table-row" key={t.id} style={{ '--city': `url(${cityArt(t.city)})` }}>
                 <div>
                   <b className="city">{t.city}</b>
                   <small>
-                    {t.length === 'quick' ? 'Quick' : 'Standard'} · entry {fmt(t.entry)}
+                    {t.length === 'quick' ? 'Quick · 5 hands a round' : 'Standard · 8 hands a round'} · {fmt(t.entry)} coins to join
                   </small>
                 </div>
                 <div className="seats-dots" aria-label={`${t.seated} of ${t.seats} seats`}>
@@ -227,7 +236,7 @@ export function Lobby({ wallet, emit, join, onBack, setModal }) {
 
 // ---------------- Create table window ----------------
 const ENTRIES = [100, 250, 500, 1000, 2500, 5000, 10000];
-const cityFor = (e) => (e >= 10000 ? 'Macau' : e >= 2500 ? 'Monte Carlo' : e >= 500 ? 'Las Vegas' : 'New York');
+const cityFor = (e) => (e >= 10000 ? 'London' : e >= 2500 ? 'Monte Carlo' : e >= 500 ? 'Las Vegas' : 'New York');
 
 export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
   const [ei, setEi] = useState(0);
@@ -243,17 +252,18 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
       onClose={onClose}
       wide
       banner={
-        <div className={`city-banner city-${city.toLowerCase().replace(' ', '-')}`}>
-          <h5>CREATE {isPrivate ? 'PRIVATE' : 'SIT-AND-GO'} TABLE</h5>
+        <div className="city-banner" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,6,40,.15), rgba(10,6,40,.75)), url(${cityArt(city)})` }}>
+          <h5>{isPrivate ? 'TABLE FOR FRIENDS' : 'CREATE A TABLE'}</h5>
           <h2>{city}</h2>
         </div>
       }
     >
       <div className="bet-head">
         <span className="bet-pill">
-          <img src="/ui/coins.webp" alt="" /> ENTRY {fmt(entry)}
+          <img src="/art/icons/coins.webp" alt="" /> ENTRY {fmt(entry)}
         </span>
       </div>
+      <p className="explain">Each player pays {fmt(entry)} coins to sit down. Bigger entries take you to a new city.</p>
       <div className="slider-row">
         <button className="gold-round" onClick={() => setEi(Math.max(0, ei - 1))} aria-label="Lower entry">
           −
@@ -264,22 +274,22 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
         </button>
       </div>
       <div className="prize-pill">
-        Prize for 1st: <span className="coin-dot sm">♠</span> {fmt(prize1)} · 2nd: {fmt(prize2)}
+        <img src="/art/icons/medal-gold.webp" alt="" /> 1st wins {fmt(prize1)} · <img src="/art/icons/medal-silver.webp" alt="" /> 2nd wins {fmt(prize2)}
       </div>
 
       <div className="opt-box">
         <h4>GAME LENGTH</h4>
         <div className="seg">
           <button className={length === 'quick' ? 'on' : ''} onClick={() => setLength('quick')}>
-            QUICK <small>3 rounds × 5 hands · ~5 min</small>
+            QUICK <small>5 hands a round · about 5 min</small>
           </button>
           <button className={length === 'standard' ? 'on' : ''} onClick={() => setLength('standard')}>
-            STANDARD <small>3 rounds × 8 hands · ~10 min</small>
+            STANDARD <small>8 hands a round · about 10 min</small>
           </button>
         </div>
       </div>
 
-      <h6 className="mini-title">TABLE &amp; CARDS</h6>
+      <h6 className="mini-title">TABLE COLOUR</h6>
       <div className="themes">
         {THEMES.map((t) => {
           const locked = level < t.level;
@@ -290,16 +300,16 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
                 <i className="r">♥</i>
                 <i>♣</i>
                 <i className="r">♦</i>
-                {locked && <em>🔒</em>}
+                {locked && <em><img src="/art/icons/lock.webp" alt="Locked" /></em>}
               </span>
-              <small>{t.name}</small>
+              <small>{locked ? `Level ${t.level}` : t.name}</small>
             </button>
           );
         })}
       </div>
 
       <button className="pill green big wide" disabled={wallet.coins < entry} onClick={() => onCreate({ isPrivate, length, entry, theme })}>
-        {wallet.coins < entry ? 'NOT ENOUGH COINS' : 'PLAY NOW'}
+        {wallet.coins < entry ? 'NOT ENOUGH COINS' : isPrivate ? 'CREATE TABLE' : 'PLAY NOW'}
       </button>
     </Modal>
   );
@@ -309,14 +319,19 @@ export function CreateTable({ wallet, level, isPrivate, onClose, onCreate }) {
 export function PrivateGame({ onClose, onCreate, onJoin }) {
   const [code, setCode] = useState('');
   return (
-    <Modal title="PRIVATE GAME" onClose={onClose}>
-      <p className="center">Play with friends at your own table. Bots fill any empty seats when you start.</p>
+    <Modal title="PLAY WITH FRIENDS" onClose={onClose}>
+      <img src="/art/icons/friends.webp" alt="" className="modal-art" />
+      <ol className="steps">
+        <li>Create a table. You get a 5-letter code and an invite link.</li>
+        <li>Send the code or link to your friends.</li>
+        <li>Press Start when everyone is in. Computer players fill any empty seats.</li>
+      </ol>
       <button className="pill gold big wide" onClick={onCreate}>
-        CREATE PRIVATE TABLE
+        CREATE A TABLE
       </button>
-      <div className="or">or join with a code</div>
+      <div className="or">Got a code from a friend?</div>
       <div className="join-row">
-        <input className="field code" maxLength={5} placeholder="CODE" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+        <input className="field code" maxLength={5} placeholder="CODE" aria-label="Table code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} onKeyDown={(e) => e.key === 'Enter' && code.length === 5 && onJoin(code)} />
         <button className="pill green" disabled={code.length < 5} onClick={() => onJoin(code)}>
           JOIN
         </button>
@@ -325,29 +340,122 @@ export function PrivateGame({ onClose, onCreate, onJoin }) {
   );
 }
 
-// ---------------- Help ----------------
-export function Help({ onClose }) {
+// ---------------- Quick tour (first visit, and "How to play") ----------------
+const TOUR = [
+  {
+    art: '/art/icons/chips.webp',
+    title: 'Everyone gets 1,000 chips',
+    text: 'Six players sit at one table and play the same dealer. You are not just trying to beat the dealer: you want more chips than the other players.',
+  },
+  {
+    art: '/art/icons/crowned-card.webp',
+    title: 'Get closer to 21 than the dealer',
+    text: 'Number cards count as their number, J Q K count 10, and an Ace counts 1 or 11. Go over 21 and you lose the hand.',
+    moves: [
+      ['HIT', 'green', 'Take another card'],
+      ['STAND', 'red', 'Keep what you have'],
+      ['DOUBLE', 'gold', 'Double your bet, get 1 card'],
+      ['SPLIT', 'blue', 'Turn a pair into 2 hands'],
+    ],
+  },
+  {
+    art: '/art/icons/shield.webp',
+    title: 'Lowest stack is out',
+    text: 'There are 3 rounds. After rounds 1 and 2, the player with the fewest chips leaves the table. The bar at the top counts the hands left, and the player in danger glows red.',
+  },
+  {
+    art: '/art/icons/trophy.webp',
+    title: 'Most chips wins',
+    text: 'After round 3, the biggest stack wins. 1st and 2nd place win coins. Want to learn first? Practice is free and shows you the best move every time.',
+  },
+];
+
+export function Tour({ onClose, onPractice }) {
+  const [i, setI] = useState(0);
+  const step = TOUR[i];
+  const last = i === TOUR.length - 1;
   return (
-    <Modal title="HOW TO PLAY" onClose={onClose} wide>
+    <Modal title="HOW TO PLAY" onClose={onClose}>
+      <div className="tour">
+        <img src={step.art} alt="" className="modal-art" />
+        <small className="tour-count">
+          STEP {i + 1} OF {TOUR.length}
+        </small>
+        <h3>{step.title}</h3>
+        <p>{step.text}</p>
+        {step.moves && (
+          <div className="moves">
+            {step.moves.map(([m, c, d]) => (
+              <div key={m}>
+                <span className={`pill sm ${c}`}>{m}</span>
+                <small>{d}</small>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="dots" aria-hidden="true">
+          {TOUR.map((_, n) => (
+            <i key={n} className={n === i ? 'on' : ''} />
+          ))}
+        </div>
+        <div className="row-btns">
+          {i > 0 && (
+            <button className="pill blue" onClick={() => setI(i - 1)}>
+              BACK
+            </button>
+          )}
+          {!last && (
+            <button className="pill green" onClick={() => setI(i + 1)}>
+              NEXT
+            </button>
+          )}
+          {last && onPractice && (
+            <button className="pill purple" onClick={onPractice}>
+              TRY PRACTICE
+            </button>
+          )}
+          {last && (
+            <button className="pill green" onClick={onClose}>
+              GOT IT
+            </button>
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+// ---------------- Help (full rules) ----------------
+export function Help({ onClose, onTour }) {
+  return (
+    <Modal title="RULES" onClose={onClose} wide>
       <div className="help">
-        <h4>Beat the table, not just the dealer</h4>
-        <p>Everyone starts with 1,000 tournament chips and plays the same dealer. What matters is your chip count compared with the other players.</p>
+        {onTour && (
+          <button className="pill gold sm" onClick={onTour}>
+            SHOW THE 1-MINUTE GUIDE
+          </button>
+        )}
+        <h4>The goal</h4>
+        <p>Have the most chips at the end. Everyone starts with 1,000 tournament chips and plays the same dealer.</p>
+        <h4>Each hand</h4>
+        <ul>
+          <li>Choose your bet, then press Place Bet.</li>
+          <li>Get closer to 21 than the dealer without going over. Ace = 1 or 11, J Q K = 10.</li>
+          <li>Hit = take a card. Stand = stop. Double = double your bet and take exactly 1 card. Split = turn a pair into 2 hands.</li>
+          <li>Win and you get your bet back plus the same again. Blackjack (an Ace and a 10-card) pays 1½ times your bet.</li>
+        </ul>
         <h4>Rounds and the cut</h4>
         <ul>
           <li>3 rounds of 8 hands (Quick: 5 hands). Bets go up each round: 10–100, then 25–250, then 50–500.</li>
-          <li>After rounds 1 and 2, the lowest stack at the table is eliminated. The top bar shows how many hands are left before the cut.</li>
-          <li>After round 3, the biggest stack wins. 1st and 2nd share the prize.</li>
+          <li>After rounds 1 and 2, the player with the fewest chips is out. The top bar shows how many hands are left.</li>
+          <li>After round 3, the biggest stack wins. 1st and 2nd win coins.</li>
         </ul>
         <h4>Secret Bet</h4>
-        <p>On the last hand of each round you may hide your bet. Nobody sees it until the cards are dealt, so leaders can't simply copy you.</p>
-        <h4>The rules</h4>
-        <ul>
-          <li>6 decks. Dealer stands on all 17s. Blackjack pays 3:2.</li>
-          <li>Double on any first two cards. Split a pair once; split aces get one card each.</li>
-          <li>15 seconds per decision. If time runs out, the game plays basic strategy for you.</li>
-        </ul>
-        <h4>Practice</h4>
-        <p>Practice tables are free and turn on the Smart Coach, which highlights the best move and explains why.</p>
+        <p>On the last hand of each round you can hide your bet, so nobody can copy you.</p>
+        <h4>Time limit</h4>
+        <p>You have 15 seconds for each choice. If time runs out, the game picks the best move for you and keeps your seat.</p>
+        <h4>Table details</h4>
+        <p className="fine">6 decks, reshuffled at 75%. Dealer stands on all 17s and checks for blackjack. Split once; split Aces get one card each.</p>
         <p className="fine">Blackjack Haven is free. Coins are play money with no cash value and can never be bought or cashed out.</p>
       </div>
     </Modal>
@@ -362,8 +470,8 @@ export function Leaders({ wallet, profile, onClose }) {
   const acc = wallet.results.filter((r) => r.accuracy != null);
   const avgAcc = acc.length ? Math.round(acc.reduce((a, r) => a + r.accuracy, 0) / acc.length) : null;
   return (
-    <Modal title="LEADERS" onClose={onClose}>
-      <img src="/ui/podium.webp" alt="" className="modal-art" />
+    <Modal title="MY STATS" onClose={onClose}>
+      <img src="/art/icons/podium.webp" alt="" className="modal-art" />
       <div className="stat-grid">
         <div>
           <b>{real.length}</b>
@@ -379,7 +487,7 @@ export function Leaders({ wallet, profile, onClose }) {
         </div>
         <div>
           <b>{avgAcc ?? '–'}%</b>
-          <small>Strategy accuracy</small>
+          <small>Best-move score</small>
         </div>
       </div>
       <p className="fine center">{profile.name}'s results on this device. Weekly leagues with other players are coming next.</p>
@@ -390,14 +498,17 @@ export function Leaders({ wallet, profile, onClose }) {
 export function Trophies({ wallet, onClose }) {
   return (
     <Modal title="TROPHY ROOM" onClose={onClose}>
-      <img src="/ui/trophy.webp" alt="" className="modal-art" />
+      <img src="/art/icons/trophy-laurel.webp" alt="" className="modal-art rounded" />
       {wallet.results.length === 0 ? (
         <p className="center">Finish a tournament to see your results here.</p>
       ) : (
         <ul className="results-list">
           {wallet.results.map((r, i) => (
             <li key={i}>
-              <span className={`place p${r.place}`}>{ordinal(r.place)}</span>
+              <span className={`place p${r.place}`}>
+                {r.place <= 3 && <img src={MEDALS[r.place]} alt="" />}
+                {ordinal(r.place)}
+              </span>
               <span>{r.practice ? 'Practice' : r.city}</span>
               <span>{r.prize ? `+${fmt(r.prize)}` : r.practice ? '' : `−${fmt(r.entry)}`}</span>
               <small>{new Date(r.at).toLocaleDateString()}</small>
@@ -408,5 +519,7 @@ export function Trophies({ wallet, onClose }) {
     </Modal>
   );
 }
+
+export const MEDALS = { 1: '/art/icons/medal-gold.webp', 2: '/art/icons/medal-silver.webp', 3: '/art/icons/medal-bronze.webp' };
 
 export const ordinal = (n) => (n ? n + (['th', 'st', 'nd', 'rd'][n % 100 > 10 && n % 100 < 14 ? 0 : n % 10] ?? 'th') : '–');
